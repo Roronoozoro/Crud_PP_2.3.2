@@ -1,11 +1,13 @@
 package web.config;
 
+import java.util.Objects;
 import java.util.Properties;
 
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
@@ -20,13 +22,12 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 @EnableTransactionManagement
-@PropertySource(value = {"classpath:bd.properties"})
+@PropertySource(value ="classpath:bd.properties")
+@ComponentScan("web")
 public class HibernateConfig {
-
     private Environment environment;
 
-    @Autowired
-    public void setEnvironment(Environment environment) {
+    public HibernateConfig(Environment environment) {
         this.environment = environment;
     }
 
@@ -57,7 +58,7 @@ public class HibernateConfig {
     @Bean
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName(environment.getRequiredProperty("bd.driver"));
+        dataSource.setDriverClassName(Objects.requireNonNull(environment.getRequiredProperty("bd.driver")));
         dataSource.setUrl(environment.getRequiredProperty("bd.url"));
         dataSource.setUsername(environment.getRequiredProperty("bd.username"));
         dataSource.setPassword(environment.getRequiredProperty("bd.password"));
